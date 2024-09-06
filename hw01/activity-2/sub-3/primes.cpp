@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -9,31 +10,35 @@ vector<int> primes;
 
 void buildSieve(int n){
   sieve.resize(n + 1, true);
-  sieve[0] = false, sieve[1] = false;
+  primes = {};
+  int i = 0;
+  while(i <= n && i < 2)
+    sieve[i++] = false;
   for(int i = 2; i <= n; ++i){
     if(sieve[i]){
       primes.push_back(i);
       for(int j = i * 2; j <= n;  j += i)
         sieve[j] = false;
     }
-  }
+  } 
 }
 
 bool isPrime(int n){
-  if(n < sieve.size() - 1)
+  if(n >= sieve.size())
     buildSieve(n);
   return sieve[n];
 }
 
 void displayPrimes(int range){
-  if(range < sieve.size() - 1)
+  if(range > sieve.size())
     buildSieve(range);
   int i = 0;
-  if (sieve[i] <= range)
-    cout << sieve[i++];
-  while (sieve[i] <= range){
-    cout << ", " << sieve[i++] << endl;
+  if (i < primes.size() && primes[i] <= range)
+    cout << primes[i++];
+  while (i < primes.size() && primes[i] <= range){
+    cout << ", " << primes[i++];
   }
+  cout << endl;
 }
 
 void info() {
@@ -53,7 +58,6 @@ bool isValidList(string &txt){
   char c;
   while (i < txt.size() && state != -1){
     c = txt[i++];
-    cout << state << endl;
     switch (state){
       case 0:
         if (c == '{') state = 1;
@@ -100,13 +104,37 @@ vector<int> txtToList(string &txt){
       ans.push_back(stoi(aux));
       aux = "";
     }
-  }  
+  }
+  if(!aux.empty())
+    ans.push_back(stoi(aux));
+  return ans;
+}
+
+vector<int> identifyPrimeList(vector<int>& list){
+  vector<int>::iterator max = max_element(list.begin(), list.end());
+  vector<int> ans;
+  if(*max >= sieve.size())
+    buildSieve(*max);
+  for(int i = 0; i < list.size(); ++i){
+    if(sieve[list[i]])
+      ans.push_back(list[i]);
+  }
+  return ans;
+}
+
+void displayList(vector<int>& list){
+  int i = 0;
+  cout << "{" << list[i++];
+  while (i < list.size()){
+    cout << ", " << list[i++];
+  }
+  cout << "}" << endl;
 }
 
 int main() {
   string op;
+  info();
   while (true) {
-    info();
     cout << ">> ";
     cin >> op;
     if (op == "-h") {
@@ -126,16 +154,10 @@ int main() {
       getline(cin, listTxt);
       if (isValidList(listTxt)){
         list = txtToList(listTxt);
-        cout << "Valid" << endl;
+        list = identifyPrimeList(list);
+        displayList(list);
       }else {
         cout << "Invalid list : \"" <<  listTxt << "\"" << endl;
-      }
-      for (int num : list) {
-        if (isPrime(num)) {
-          cout << num << " is prime" << endl;
-        } else {
-          cout << num << " is not prime" << endl;
-        }
       }
     } else {
       cout << "Invalid option. Use -h for help.\n";
