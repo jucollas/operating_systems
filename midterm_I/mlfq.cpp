@@ -15,9 +15,10 @@ int MLFQ::nextTime(){
         executionLog.push_back({current->getPID(), tmp});
 
       if(!q[i].hasProcessExe() && current->getBurstTime() > 0){
-        q[i].erase(current);
-        current->setPriority(current->getPriority() + 1);
-        this->add(*current);
+        if(i + 1 < q.size()){
+          q[i].erase(current);
+          q[i + 1].add(*current);
+        }
       }
 
       flag = false;
@@ -26,4 +27,8 @@ int MLFQ::nextTime(){
   }
   if(flag) currentTime++;
   return currentTime;
+}
+
+void MLFQ::add(Process& process) {
+  q[0].add(process);
 }

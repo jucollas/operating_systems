@@ -8,6 +8,7 @@ class MLFQ : public MLQ {
   public:
     MLFQ();
     int nextTime() override;
+    void add(Process& process) override;
 };
 
 #endif // MLFQ_H
