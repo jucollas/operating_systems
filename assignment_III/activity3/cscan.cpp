@@ -1,5 +1,7 @@
 #include "cscan.h"
 
+Cscan::Cscan(){}
+
 void Cscan::simulation(int start, int maxTrack, vector<int>& requests, int moveTime) {
 	int distance = 0;
 	vector<int> left, right;

@@ -1,5 +1,7 @@
 #include "scan.h"
 
+Scan::Scan(){}
+
 void Scan::simulation(int start, int maxTrack, vector<int>& requests, int moveTime) {
   int distance = 0;
   vector<int> left, right;
